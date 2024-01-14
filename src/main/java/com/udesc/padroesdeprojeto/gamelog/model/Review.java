@@ -15,7 +15,7 @@ public class Review {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     //Entre 0 a 5 e pode ser uma nota tipo 3.5
     private float rating;
