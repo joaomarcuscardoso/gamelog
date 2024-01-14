@@ -1,9 +1,6 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Data
@@ -21,9 +18,11 @@ public class Review {
     private Integer id;
 
     //Entre 0 a 5 e pode ser uma nota tipo 3.5
-    private float nota;
+    private float rating;
 
     private String comment;
 
-
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private Game game;
 }

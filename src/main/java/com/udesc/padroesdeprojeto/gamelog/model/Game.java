@@ -20,7 +20,7 @@ public class Game {
     @GeneratedValue
     private Integer id;
 
-    private String nome;
+    private String name;
 
     @Column(nullable = false)
     @Nullable
@@ -38,4 +38,8 @@ public class Game {
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Review> reviews;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
