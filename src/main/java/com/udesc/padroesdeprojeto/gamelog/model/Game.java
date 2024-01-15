@@ -1,5 +1,6 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
+import com.udesc.padroesdeprojeto.gamelog.factory.Games;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "games")
-public class Game {
+public class Game implements Games {
 
     @Id
     @GeneratedValue
