@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
-
 @Controller
 @RequestMapping("/games")
 @RequiredArgsConstructor
@@ -33,7 +32,6 @@ public class GameController {
         return new ModelAndView("home");
 
     }
-
     @GetMapping
     public ResponseEntity<List<Game>> listAll(){
         return ResponseEntity.status(HttpStatus.OK).body(gameRepository.findAll());
