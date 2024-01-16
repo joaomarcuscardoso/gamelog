@@ -14,12 +14,12 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "games")
-public class Game implements Games {
+@Table(name = "dlcs")
+public class Dlc implements Games {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     private String name;
 
@@ -43,4 +43,5 @@ public class Game implements Games {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 }

@@ -25,4 +25,8 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
+
+    @ManyToOne
+    @JoinColumn(name = "dlc_id")
+    private Dlc dlcs;
 }
