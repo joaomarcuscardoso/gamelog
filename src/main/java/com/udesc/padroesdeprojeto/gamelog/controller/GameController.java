@@ -27,12 +27,15 @@ import java.util.List;
 @RequestMapping("/games")
 @RequiredArgsConstructor
 public class GameController {
+    @Autowired
     private final GameRepository gameRepository;
+    @Autowired
     private final UserRepository userRepository;
-    @GetMapping
-    public ResponseEntity<List<Game>> listAll(){
-        return ResponseEntity.status(HttpStatus.OK).body(gameRepository.findAll());
-    }
+
+//    @GetMapping
+//    public ResponseEntity<List<Game>> listAll() {
+//        return ResponseEntity.status(HttpStatus.OK).body(gameRepository.findAll());
+//    }
 
     @GetMapping("/find/{id}")
     public ResponseEntity<Object> getById(@PathVariable Integer id){
@@ -46,7 +49,7 @@ public class GameController {
     public ResponseEntity<Object> addGame(@RequestBody @Valid GameRequestDTO gameDto){
         GameFactory gameFactory = GameFactory.getInstance();
 
-        User user = userRepository.findById(gameDto.getIduUser()).orElseThrow();
+        User user = userRepository.findById(gameDto.getIdUser()).orElseThrow();
 
         Game game = gameFactory.createGames();
 

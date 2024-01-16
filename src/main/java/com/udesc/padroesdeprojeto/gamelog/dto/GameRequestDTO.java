@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class GameRequestDTO {
-    private Integer iduUser;
+    private Integer idUser;
     @NotNull(message = "Nome é obrigatório")
     private String name;
 
