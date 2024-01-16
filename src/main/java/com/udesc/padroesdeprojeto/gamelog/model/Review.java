@@ -28,5 +28,5 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "dlc_id")
-    private Dlc dlcs;
+    private Dlc dlc;
 }

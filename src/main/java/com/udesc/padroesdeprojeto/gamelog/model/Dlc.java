@@ -37,7 +37,7 @@ public class Dlc implements Games {
     @Nullable
     private String CoverImage;
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "dlc", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
     @ManyToOne
