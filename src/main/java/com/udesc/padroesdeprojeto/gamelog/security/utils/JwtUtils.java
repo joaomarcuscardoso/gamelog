@@ -4,6 +4,7 @@ import java.security.Key;
 import java.util.Date;
 
 import com.udesc.padroesdeprojeto.gamelog.security.services.UserDetailsImpl;
+import jakarta.servlet.http.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
