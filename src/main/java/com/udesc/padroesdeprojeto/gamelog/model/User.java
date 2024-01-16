@@ -1,6 +1,5 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -42,20 +41,14 @@ public class User {
     @Size(max=120)
     private String nickname;
 
-    @Column(nullable = false)
-    @Nullable
+    @Column(nullable = true)
     private String bio;
 
-    @Column(nullable = false)
-    @Nullable
+    @Column(nullable = true)
     private String profileImage;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Game> games;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
 
     public User(String nickname, String email, String password) {
         this.nickname = nickname;

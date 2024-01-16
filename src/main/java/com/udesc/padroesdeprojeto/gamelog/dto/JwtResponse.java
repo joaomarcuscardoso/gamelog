@@ -8,14 +8,14 @@ public class JwtResponse {
     private Long id;
     private String nickname;
     private String email;
-    private List<String> roles;
+    // private List<String> roles;
 
-    public JwtResponse(String accessToken, Long id, String nickname, String email, List<String> roles) {
+    public JwtResponse(String accessToken, Long id, String nickname, String email) {
         this.token = accessToken;
         this.id = id;
         this.nickname = nickname;
         this.email = email;
-        this.roles = roles;
+      //  this.roles = roles;
     }
 
     public String getAccessToken() {
@@ -56,9 +56,5 @@ public class JwtResponse {
 
     public void setUsername(String nickname) {
         this.nickname = nickname;
-    }
-
-    public List<String> getRoles() {
-        return roles;
     }
 }
