@@ -1,6 +1,5 @@
 package com.udesc.padroesdeprojeto.gamelog.controller;
 
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -13,12 +12,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
+@RequestMapping("/games")
 public class GameController {
-    @RequestMapping("/home")
-    public ModelAndView index(Authentication authentication, Model model, Cookie cookie) {
-        System.out.println("token: " + cookie.getValue());
+    @RequestMapping
+    public ModelAndView index(Authentication authentication, Model model) {
         model.addAttribute("message", "This message is from the controller.");
-        System.out.println("Authenticated user: " + authentication.getName());
         return new ModelAndView("home");
     }
 }

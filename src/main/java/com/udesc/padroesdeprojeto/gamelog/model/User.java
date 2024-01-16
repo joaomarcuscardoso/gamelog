@@ -50,6 +50,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Game> games;
 
+    @Column(nullable = true)
+    private String token;
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
