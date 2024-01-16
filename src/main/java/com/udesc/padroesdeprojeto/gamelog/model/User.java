@@ -19,7 +19,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = "nickname"),
+            @UniqueConstraint(columnNames = "username"),
             @UniqueConstraint(columnNames = "email")
         }
 )
@@ -39,7 +39,7 @@ public class User {
 
     @NotBlank
     @Size(max=120)
-    private String nickname;
+    private String username;
 
     @Column(nullable = true)
     private String bio;
@@ -50,8 +50,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Game> games;
 
-    public User(String nickname, String email, String password) {
-        this.nickname = nickname;
+    public User(String username, String email, String password) {
+        this.username = username;
         this.email = email;
         this.password = password;
     }

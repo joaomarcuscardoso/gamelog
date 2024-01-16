@@ -14,10 +14,10 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h1 style="margin-bottom: 15px;">Acesse sua conta</h1>
-                        <form th:action="@{/auth/signin}" method="post" th:object="${loginRequest}">
+                        <form th:action="@{/api/auth/signin}" method="post" th:object="${loginRequest}">
                             <div class="form-group">
-                                <label for="nickname">Nickname</label>
-                                <input type="text" class="form-control" id="nickname" placeholder="Digite seu nickname" name="nickname">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" placeholder="Digite seu username" name="username">
                             </div>
                             <div class="form-group">
                                 <label for="password">Senha</label>

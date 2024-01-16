@@ -2,6 +2,7 @@ package com.udesc.padroesdeprojeto.gamelog.security.jwt;
 
 import java.io.IOException;
 
+import com.udesc.padroesdeprojeto.gamelog.model.ERole;
 import com.udesc.padroesdeprojeto.gamelog.security.services.UserDetailsServiceImpl;
 import com.udesc.padroesdeprojeto.gamelog.security.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
@@ -39,11 +40,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, ERole.ROLE_USER,
                         userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                System.out.println("nickname: ");
+                System.out.println("username: ");
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
