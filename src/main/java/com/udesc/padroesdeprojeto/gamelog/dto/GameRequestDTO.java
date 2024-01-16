@@ -1,12 +1,13 @@
 package com.udesc.padroesdeprojeto.gamelog.dto;
 
+import com.udesc.padroesdeprojeto.gamelog.model.User;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class GameRequestDTO {
-    private Integer id;
+    private Integer iduUser;
     @NotNull(message = "Nome é obrigatório")
     private String name;
 
@@ -18,5 +19,7 @@ public class GameRequestDTO {
     private String description;
 
     private String CoverImage;
+
+    private User user;
 
 }

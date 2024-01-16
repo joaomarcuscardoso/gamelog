@@ -43,4 +43,12 @@ public class Game implements Games {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Integer getUserId() {
+        if (user == null) {
+            return 0;
+        }
+
+        return user.getId();
+    }
 }
