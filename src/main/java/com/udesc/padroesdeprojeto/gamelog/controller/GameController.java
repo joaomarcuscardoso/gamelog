@@ -1,18 +1,25 @@
 package com.udesc.padroesdeprojeto.gamelog.controller;
 
+import com.udesc.padroesdeprojeto.gamelog.Facade.FileGenerator;
+import com.udesc.padroesdeprojeto.gamelog.Facade.FileGeneratorFacade;
 import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
+import com.udesc.padroesdeprojeto.gamelog.factory.Games;
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
 import com.udesc.padroesdeprojeto.gamelog.repository.GameRepository;
 import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -21,7 +28,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/games")
@@ -92,5 +102,21 @@ public class GameController {
             return null;
 
         return user;
+    }
+
+    @GetMapping("/download/{type}")
+    public ResponseEntity<Object> downloadFile(@PathVariable("type") String type) {
+        FileGenerator fileGenerator = new FileGeneratorFacade();
+        List<Game> games = gameRepository.findAll();
+        byte[] fileContent = fileGenerator.saveFile(type, games);
+        if (fileContent == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Digite o Tipo de Documento para executar download, valor permitido: pdf ou csv");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "data." + type.toLowerCase());
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fileContent);
     }
 }
