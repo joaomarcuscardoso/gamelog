@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.codehaus.groovy.util.ListHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Map;
 import java.util.UUID;
 
-@Controller
-@RequestMapping("/auth")
+@RestController
+@RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
     @Autowired
@@ -41,44 +45,34 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public String authenticateUser(@Valid @ModelAttribute("loginRequest") LoginRequest loginRequest,
-                                   RedirectAttributes redirectAttributes, HttpSession session) {
+    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         User user = repository.findByUsername(loginRequest.getUsername()).orElse(null);
-        if (user == null) {
-            redirectAttributes.addFlashAttribute("error", "Login Failed!");
-            return "redirect:/auth/signin";
-        }
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.OK).body("Error no Login.");
 
         PasswordEncoder encode = new BCryptPasswordEncoder();
-        if (encode.matches(loginRequest.getPassword(), user.getPassword())) {
-            String token = UUID.randomUUID().toString();
-            user.setToken(token);
-            repository.save(user);
-            session.setAttribute("token", token);
-            session.setAttribute("email", user.getEmail());
-            redirectAttributes.addFlashAttribute("message", "Login successful!");
+        if (!encode.matches(loginRequest.getPassword(), user.getPassword()))
+            return ResponseEntity.status(HttpStatus.OK).body("Error no Login");
 
-            return "redirect:/games";
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Login Failed!");
-            return "redirect:/auth/signin";
-        }
+
+        String token = UUID.randomUUID().toString();
+        user.setToken(token);
+        repository.save(user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @PostMapping("/signup")
-    public String processSignupForm(@ModelAttribute("signupRequest") SignupRequest signupRequest, RedirectAttributes redirectAttributes) {
-        Boolean existUser = repository.existsByUsernameAndEmail(signupRequest.getUsername(), signupRequest.getEmail());
-        if (existUser) {
-            redirectAttributes.addFlashAttribute("error", "Error Ao Criar usuário!");
-            return "redirect:/auth/signup";
-        }
+    public ResponseEntity<Object> processSignupForm(@RequestBody @Valid SignupRequest signupRequest) {
+        Boolean existUser = repository.existsByUsernameOrEmail(signupRequest.getUsername(), signupRequest.getEmail());
+        if (existUser)
+            return ResponseEntity.status(HttpStatus.OK).body("Username ou email já cadastrado");
 
         PasswordEncoder encode = new BCryptPasswordEncoder();
         String passwordEncode = encode.encode(signupRequest.getPassword());
-
         User user = new User(signupRequest.getUsername(), signupRequest.getEmail(), passwordEncode);
         repository.save(user);
-        // Redirect to a success page or login page
-        return "redirect:/auth/signin";
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 }
