@@ -1,5 +1,6 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
+import com.udesc.padroesdeprojeto.gamelog.observer.IObserver;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -23,7 +24,7 @@ import java.util.Set;
             @UniqueConstraint(columnNames = "email")
         }
 )
-public class User {
+public class User implements IObserver {
 
     @Id
     @GeneratedValue
@@ -60,5 +61,10 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    @Override
+    public void update(Game game) {
+        System.out.println("User: " + this.username + " notified the game: " + game.getName());
     }
 }

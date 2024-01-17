@@ -3,6 +3,7 @@ package com.udesc.padroesdeprojeto.gamelog.controller;
 import com.udesc.padroesdeprojeto.gamelog.dto.LoginRequest;
 import com.udesc.padroesdeprojeto.gamelog.dto.SignupRequest;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
+import com.udesc.padroesdeprojeto.gamelog.observer.GameEvent;
 import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -72,6 +73,9 @@ public class UserController {
         String passwordEncode = encode.encode(signupRequest.getPassword());
         User user = new User(signupRequest.getUsername(), signupRequest.getEmail(), passwordEncode);
         repository.save(user);
+
+        GameEvent gameEvent = GameEvent.getInstance();
+        gameEvent.addObserver(user);
 
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }

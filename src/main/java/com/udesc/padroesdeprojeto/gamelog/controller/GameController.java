@@ -9,6 +9,8 @@ import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
 import com.udesc.padroesdeprojeto.gamelog.factory.Games;
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
+import com.udesc.padroesdeprojeto.gamelog.observer.GameEvent;
+import com.udesc.padroesdeprojeto.gamelog.observer.IObserver;
 import com.udesc.padroesdeprojeto.gamelog.repository.GameRepository;
 import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
 import com.udesc.padroesdeprojeto.gamelog.service.JavaMailSenderService;
@@ -47,6 +49,7 @@ public class GameController {
     @Autowired
     private JavaMailSenderService mailSenderService;
 
+
 //    @GetMapping
 //    public ResponseEntity<List<Game>> listAll() {
 //        return ResponseEntity.status(HttpStatus.OK).body(gameRepository.findAll());
@@ -76,6 +79,11 @@ public class GameController {
         game.setUser(user);
         gameRepository.save(game);
 
+        // Observer
+//        GameEvent gameEvent = GameEvent.getInstance();
+//        gameEvent.notifyObservers(game);
+
+        // Command
         Invoker invoker = Invoker.getInstance();
         EmailCommand emailCommand = new EmailCommand(mailSenderService, user, game);
 
