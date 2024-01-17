@@ -11,6 +11,7 @@ import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
 import com.udesc.padroesdeprojeto.gamelog.repository.GameRepository;
 import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
+import com.udesc.padroesdeprojeto.gamelog.service.JavaMailSenderService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -43,6 +44,8 @@ public class GameController {
     private final GameRepository gameRepository;
     @Autowired
     private final UserRepository userRepository;
+    @Autowired
+    private JavaMailSenderService mailSenderService;
 
 //    @GetMapping
 //    public ResponseEntity<List<Game>> listAll() {
@@ -74,7 +77,7 @@ public class GameController {
         gameRepository.save(game);
 
         Invoker invoker = Invoker.getInstance();
-        EmailCommand emailCommand = new EmailCommand(user, game);
+        EmailCommand emailCommand = new EmailCommand(mailSenderService, user, game);
 
         invoker.addCommandEmail(emailCommand);
         invoker.executeCommandsEmail();
