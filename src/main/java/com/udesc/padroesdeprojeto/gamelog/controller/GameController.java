@@ -1,5 +1,7 @@
 package com.udesc.padroesdeprojeto.gamelog.controller;
 
+import com.udesc.padroesdeprojeto.gamelog.command.EmailCommand;
+import com.udesc.padroesdeprojeto.gamelog.command.Invoker;
 import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
@@ -60,6 +62,12 @@ public class GameController {
         game.setCoverImage(gameDto.getCoverImage());
         game.setUser(user);
         gameRepository.save(game);
+
+        Invoker invoker = Invoker.getInstance();
+        EmailCommand emailCommand = new EmailCommand(user, game);
+
+        invoker.addCommandEmail(emailCommand);
+        invoker.executeCommandsEmail();
 
         return ResponseEntity.status(HttpStatus.OK).body(game);
     }
