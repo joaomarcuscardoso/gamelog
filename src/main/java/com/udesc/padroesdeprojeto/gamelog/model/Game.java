@@ -1,5 +1,6 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
+import com.fasterxml.jackson.annotation.*;
 import com.udesc.padroesdeprojeto.gamelog.factory.Games;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -15,6 +16,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "games")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Game implements Games {
 
     @Id
