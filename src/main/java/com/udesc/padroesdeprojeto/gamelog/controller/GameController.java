@@ -2,9 +2,9 @@ package com.udesc.padroesdeprojeto.gamelog.controller;
 
 import com.udesc.padroesdeprojeto.gamelog.command.EmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.command.Invoker;
-import com.udesc.padroesdeprojeto.gamelog.Facade.FileGenerator;
-import com.udesc.padroesdeprojeto.gamelog.Facade.FileGeneratorFacade;
 import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
+import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
+import com.udesc.padroesdeprojeto.gamelog.facade.FileGeneratorFacade;
 import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
 import com.udesc.padroesdeprojeto.gamelog.factory.Games;
 import com.udesc.padroesdeprojeto.gamelog.model.Game;

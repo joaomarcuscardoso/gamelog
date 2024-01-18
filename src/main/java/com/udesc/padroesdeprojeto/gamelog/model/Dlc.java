@@ -40,6 +40,10 @@ public class Dlc implements Games {
     @OneToMany(mappedBy = "dlc", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
+    @OneToMany(mappedBy = "dlc", cascade = CascadeType.ALL)
+    private List<DetailedReview> detailedReviews;
+
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

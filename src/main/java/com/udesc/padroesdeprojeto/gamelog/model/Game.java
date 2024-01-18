@@ -43,6 +43,9 @@ public class Game implements Games {
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    private List<DetailedReview> detailedReviews;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -1,6 +1,5 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.Reviews;
@@ -15,23 +14,21 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "reviews")
+@Table(name = "detailed_reviews")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Review implements Reviews {
-
-    public Review(String title, float rating, String comment){
+public class DetailedReview implements Reviews {
+    public DetailedReview(String title, float rating, String comment){
         this.title = title;
         this.rating = rating;
         this.comment = comment;
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
 
     private String title;
 
-    //Entre 0 a 5 e pode ser uma nota tipo 3.5
     @Size(max = 5, min = 0)
     private float rating;
 
@@ -49,8 +46,8 @@ public class Review implements Reviews {
     @JoinColumn(name = "dlc_id")
     private Dlc dlc;
 
-    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private SimpleConfig simpleConfig;
+    @OneToOne(mappedBy = "detailedReview", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DetailedConfig detailedConfig;
 
     @Override
     public Integer getGameId() {

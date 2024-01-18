@@ -53,6 +53,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Dlc> dlcs;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<DetailedReview> detailedReviews;
+
     @Column(nullable = true)
     private String token;
 
