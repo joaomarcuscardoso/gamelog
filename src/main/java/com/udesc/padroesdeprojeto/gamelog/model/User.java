@@ -1,11 +1,18 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.udesc.padroesdeprojeto.gamelog.command.EmailCommand;
+import com.udesc.padroesdeprojeto.gamelog.command.Invoker;
 import com.udesc.padroesdeprojeto.gamelog.observer.IObserver;
+import com.udesc.padroesdeprojeto.gamelog.service.JavaMailSenderService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +43,7 @@ public class User implements IObserver {
 
     @NotBlank
     @Size(min=8)
+    @JsonIgnore
     private String password;
 
     @NotBlank
@@ -47,6 +55,9 @@ public class User implements IObserver {
 
     @Column(nullable = true)
     private String profileImage;
+
+    @Column(nullable = true)
+    private String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Game> games;
@@ -64,7 +75,11 @@ public class User implements IObserver {
     }
 
     @Override
-    public void update(Game game) {
-        System.out.println("User: " + this.username + " notified the game: " + game.getName());
+    public void notifyUser(MailSender mailSender, String subject, String message) {
+        SimpleMailMessage email = new SimpleMailMessage();
+        email.setTo(this.getEmail());
+        email.setSubject(subject);
+        email.setText(message);
+        mailSender.send(email);
     }
 }

@@ -1,22 +1,22 @@
 package com.udesc.padroesdeprojeto.gamelog.observer;
 
-import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import lombok.NoArgsConstructor;
+import org.springframework.mail.MailSender;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class GameEvent implements  IGame {
-    private static GameEvent instance = null;
+public class ServerEvent implements IEventServer {
+    private static ServerEvent instance = null;
     
-    public static GameEvent getInstance() {
+    public static ServerEvent getInstance() {
         if (instance == null) {
-            instance = new GameEvent();
+            instance = new ServerEvent();
         }
         return instance;
     }
-    private List<IObserver> observers = new ArrayList<>();
+    private final List<IObserver> observers = new ArrayList<>();
 
     @Override
     public void addObserver(IObserver obs) {
@@ -29,9 +29,9 @@ public class GameEvent implements  IGame {
     }
 
     @Override
-    public void notifyObservers(Game game) {
+    public void notifyObservers(MailSender mailSender, String subject, String message) {
         for (IObserver obs : observers) {
-            obs.update(game);
+            obs.notifyUser(mailSender, subject, message);
         }
     }
 }

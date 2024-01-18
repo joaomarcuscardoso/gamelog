@@ -1,7 +1,8 @@
 package com.udesc.padroesdeprojeto.gamelog.observer;
 
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
+import org.springframework.mail.MailSender;
 
 public interface IObserver {
-    void update(Game game);
+    void notifyUser(MailSender mailSender, String message, String subject);
 }

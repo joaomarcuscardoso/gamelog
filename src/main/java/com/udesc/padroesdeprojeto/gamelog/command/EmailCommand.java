@@ -16,6 +16,7 @@ public class EmailCommand implements Command{
         this.user = user;
         this.game = game;
     }
+
     @Override
     public void execute() {
         String body = user.getUsername() + "O jogo: " + game.getName() + "Foi criado e adicionado na sua biblioteca, não se esqueça de avalialo.";

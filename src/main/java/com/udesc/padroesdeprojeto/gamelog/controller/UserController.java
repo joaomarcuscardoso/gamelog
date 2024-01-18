@@ -3,27 +3,18 @@ package com.udesc.padroesdeprojeto.gamelog.controller;
 import com.udesc.padroesdeprojeto.gamelog.dto.LoginRequest;
 import com.udesc.padroesdeprojeto.gamelog.dto.SignupRequest;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
-import com.udesc.padroesdeprojeto.gamelog.observer.GameEvent;
+import com.udesc.padroesdeprojeto.gamelog.observer.ServerEvent;
 import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.codehaus.groovy.util.ListHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -74,7 +65,7 @@ public class UserController {
         User user = new User(signupRequest.getUsername(), signupRequest.getEmail(), passwordEncode);
         repository.save(user);
 
-        GameEvent gameEvent = GameEvent.getInstance();
+        ServerEvent gameEvent = ServerEvent.getInstance();
         gameEvent.addObserver(user);
 
         return ResponseEntity.status(HttpStatus.OK).body(user);

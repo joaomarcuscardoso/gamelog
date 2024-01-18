@@ -6,37 +6,28 @@ import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGeneratorFacade;
 import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
-import com.udesc.padroesdeprojeto.gamelog.factory.Games;
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
-import com.udesc.padroesdeprojeto.gamelog.observer.GameEvent;
-import com.udesc.padroesdeprojeto.gamelog.observer.IObserver;
 import com.udesc.padroesdeprojeto.gamelog.repository.GameRepository;
 import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
 import com.udesc.padroesdeprojeto.gamelog.service.JavaMailSenderService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Controller
 @RequestMapping("/games")
@@ -70,7 +61,6 @@ public class GameController {
         User user = userRepository.findById(gameDto.getIdUser()).orElseThrow();
 
         Game game = gameFactory.createGames();
-
         game.setName(gameDto.getName());
         game.setReleased(gameDto.getReleased());
         game.setDeveloper(gameDto.getDeveloper());
@@ -79,14 +69,9 @@ public class GameController {
         game.setUser(user);
         gameRepository.save(game);
 
-        // Observer
-//        GameEvent gameEvent = GameEvent.getInstance();
-//        gameEvent.notifyObservers(game);
-
         // Command
         Invoker invoker = Invoker.getInstance();
         EmailCommand emailCommand = new EmailCommand(mailSenderService, user, game);
-
         invoker.addCommandEmail(emailCommand);
         invoker.executeCommandsEmail();
 
