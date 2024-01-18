@@ -25,6 +25,24 @@ public class UserController {
     @Autowired
     private UserRepository repository;
 
+    @PostMapping("/signin")
+    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        User user = repository.findByUsername(loginRequest.getUsername()).orElse(null);
+        if (user == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error no Login.");
+
+        PasswordEncoder encode = new BCryptPasswordEncoder();
+        if (!encode.matches(loginRequest.getPassword(), user.getPassword()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error no Login");
+
+
+        String token = UUID.randomUUID().toString();
+        user.setToken(token);
+        repository.save(user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
     @GetMapping("/signin")
     public ModelAndView signin() {
 
@@ -36,29 +54,11 @@ public class UserController {
         return new ModelAndView("signup");
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<Object> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        User user = repository.findByUsername(loginRequest.getUsername()).orElse(null);
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.OK).body("Error no Login.");
-
-        PasswordEncoder encode = new BCryptPasswordEncoder();
-        if (!encode.matches(loginRequest.getPassword(), user.getPassword()))
-            return ResponseEntity.status(HttpStatus.OK).body("Error no Login");
-
-
-        String token = UUID.randomUUID().toString();
-        user.setToken(token);
-        repository.save(user);
-
-        return ResponseEntity.status(HttpStatus.OK).body(user);
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<Object> processSignupForm(@RequestBody @Valid SignupRequest signupRequest) {
         Boolean existUser = repository.existsByUsernameOrEmail(signupRequest.getUsername(), signupRequest.getEmail());
         if (existUser)
-            return ResponseEntity.status(HttpStatus.OK).body("Username ou email já cadastrado");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username ou email já cadastrado");
 
         PasswordEncoder encode = new BCryptPasswordEncoder();
         String passwordEncode = encode.encode(signupRequest.getPassword());
