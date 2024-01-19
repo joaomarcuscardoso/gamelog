@@ -1,12 +1,11 @@
 package com.udesc.padroesdeprojeto.gamelog.controller;
 
+import com.udesc.padroesdeprojeto.gamelog.abstractFactory.DetailedFactory;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.SimpleReviewFactory;
+import com.udesc.padroesdeprojeto.gamelog.dto.DetailedReviewCondifDTO;
 import com.udesc.padroesdeprojeto.gamelog.dto.ReviewConfigDTO;
 import com.udesc.padroesdeprojeto.gamelog.model.*;
-import com.udesc.padroesdeprojeto.gamelog.repository.DlcRepository;
-import com.udesc.padroesdeprojeto.gamelog.repository.GameRepository;
-import com.udesc.padroesdeprojeto.gamelog.repository.ReviewRepository;
-import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
+import com.udesc.padroesdeprojeto.gamelog.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -28,6 +27,10 @@ public class ReviewController {
     private final GameRepository gameRepository;
     @Autowired
     private final DlcRepository dlcRepository;
+    @Autowired
+    private final DetailedReviewRepository detailedReviewRepository;
+    @Autowired
+    private final DetailedConfigRepository detailedConfigRepository;
 
     @Transactional
     @PostMapping("/review/{userId}")
@@ -70,8 +73,43 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).body(config);
     }
 
-    @PostMapping("/detailed")
-    public ResponseEntity<Object> addDetailedReview(){
-        return null;
+    @Transactional
+    @PostMapping("/detailed/{userId}")
+    public ResponseEntity<Object> addDetailedReview(@PathVariable Integer userId,
+                                                    @RequestBody @Valid DetailedReviewCondifDTO detailedReviewCondifDTO){
+        DetailedFactory detailedFactory = new DetailedFactory();
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(("Usuario não encontrado")));
+
+        DetailedReview detailedReview = detailedFactory.createReview(
+                detailedReviewCondifDTO.getTitle(),
+                detailedReviewCondifDTO.getRating(),
+                detailedReviewCondifDTO.getComment(),
+                user);
+
+        if(detailedReviewCondifDTO.getIdGame() == null){
+            Dlc dlc = dlcRepository.
+                    findById(detailedReviewCondifDTO.getIdDlc()).
+                    orElseThrow(() ->
+                            new EntityNotFoundException(("Dlc não encontrada")));
+            detailedReview.setDlc(dlc);
+        } else{
+            Game game = gameRepository.
+                    findById(detailedReviewCondifDTO.getIdGame()).
+                    orElseThrow(() ->
+                            new EntityNotFoundException(("Game não encontrado")));
+            detailedReview.setGame(game);
+        }
+
+        detailedReviewRepository.save(detailedReview);
+
+        DetailedConfig detailedConfig = detailedFactory.createConfigs(
+                detailedReviewCondifDTO.getPlatform(), detailedReviewCondifDTO.getCompletion());
+
+        detailedConfig.setSetup(detailedReviewCondifDTO.getSetup());
+        detailedConfig.setGameConfigs(detailedReviewCondifDTO.getGameConfigs());
+        detailedConfig.setDetailedReview(detailedReview);
+
+        return ResponseEntity.status(HttpStatus.OK).body(detailedConfig);
     }
 }

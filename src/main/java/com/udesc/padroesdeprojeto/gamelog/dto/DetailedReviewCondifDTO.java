@@ -1,16 +1,15 @@
 package com.udesc.padroesdeprojeto.gamelog.dto;
 
-import com.udesc.padroesdeprojeto.gamelog.model.Review;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class ReviewConfigDTO {
+public class DetailedReviewCondifDTO {
 
     private Integer idGame;
-    
+
     private Integer idDlc;
 
     @NotNull(message = "Title é obrigatório!")
@@ -29,4 +28,9 @@ public class ReviewConfigDTO {
     @NotNull(message = "Completion é obrigatório!")
     private String completion;
 
+    @NotNull(message = "Setup é obrigatório!")
+    private String setup;
+
+    @NotNull(message = "GameConfigs é obrigatório!")
+    private String gameConfigs;
 }
