@@ -33,7 +33,7 @@ public class ReviewController {
     private final DetailedConfigRepository detailedConfigRepository;
 
     @Transactional
-    @PostMapping("/review/{userId}")
+    @PostMapping("{userId}")
     public ResponseEntity<Object> addReview(@PathVariable Integer userId,
                                             @RequestBody @Valid ReviewConfigDTO reviewConfigDTO){
         SimpleReviewFactory simpleReviewFactory = new SimpleReviewFactory();
@@ -109,6 +109,8 @@ public class ReviewController {
         detailedConfig.setSetup(detailedReviewCondifDTO.getSetup());
         detailedConfig.setGameConfigs(detailedReviewCondifDTO.getGameConfigs());
         detailedConfig.setDetailedReview(detailedReview);
+
+        detailedConfigRepository.save(detailedConfig);
 
         return ResponseEntity.status(HttpStatus.OK).body(detailedConfig);
     }

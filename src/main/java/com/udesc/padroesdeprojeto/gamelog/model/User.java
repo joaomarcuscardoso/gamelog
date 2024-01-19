@@ -51,9 +51,6 @@ public class User {
     private List<Game> games;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Dlc> dlcs;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
