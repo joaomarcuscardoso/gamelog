@@ -6,7 +6,6 @@ import com.udesc.padroesdeprojeto.gamelog.abstractFactory.Configs;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

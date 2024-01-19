@@ -17,10 +17,11 @@ import lombok.*;
 @Table(name = "detailed_reviews")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class DetailedReview implements Reviews {
-    public DetailedReview(String title, float rating, String comment){
+    public DetailedReview(String title, float rating, String comment, User user){
         this.title = title;
         this.rating = rating;
         this.comment = comment;
+        this.user = user;
     }
 
     @Id

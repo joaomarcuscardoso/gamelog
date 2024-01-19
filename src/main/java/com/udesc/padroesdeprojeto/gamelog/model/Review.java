@@ -19,10 +19,11 @@ import lombok.*;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Review implements Reviews {
 
-    public Review(String title, float rating, String comment){
+    public Review(String title, float rating, String comment, User user){
         this.title = title;
         this.rating = rating;
         this.comment = comment;
+        this.user = user;
     }
 
     @Id

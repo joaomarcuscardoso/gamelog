@@ -20,6 +20,4 @@ public class GameRequestDTO {
 
     private String CoverImage;
 
-    private User user;
-
 }
