@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.Reviews;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Data
@@ -19,6 +19,9 @@ import lombok.*;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Review implements Reviews {
 
+    @Id
+    @GeneratedValue
+    private Integer id;
     public Review(String title, float rating, String comment, User user){
         this.title = title;
         this.rating = rating;
@@ -26,14 +29,12 @@ public class Review implements Reviews {
         this.user = user;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
     private String title;
 
     //Entre 0 a 5 e pode ser uma nota tipo 3.5
-    @Size(max = 5, min = 0)
+    @Min(value = 0, message = "Rating deve ser maior ou igual a 0")
+    @Max(value = 5, message = "Rating deve ser menor ou igual a 5")
     private float rating;
 
     private String comment;

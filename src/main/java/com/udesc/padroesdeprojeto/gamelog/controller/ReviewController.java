@@ -22,6 +22,8 @@ public class ReviewController {
     @Autowired
     private final ReviewRepository reviewRepository;
     @Autowired
+    private final SimpleConfigRepository simpleConfigRepository;
+    @Autowired
     private final UserRepository userRepository;
     @Autowired
     private final GameRepository gameRepository;
@@ -68,6 +70,8 @@ public class ReviewController {
                 reviewConfigDTO.getCompletion());
 
         config.setReview(review);
+
+        simpleConfigRepository.save(config);
 
 
         return ResponseEntity.status(HttpStatus.OK).body(config);

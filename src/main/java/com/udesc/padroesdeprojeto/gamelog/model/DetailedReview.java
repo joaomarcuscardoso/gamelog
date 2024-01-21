@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.Reviews;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -30,7 +32,8 @@ public class DetailedReview implements Reviews {
 
     private String title;
 
-    @Size(max = 5, min = 0)
+    @DecimalMin(value = "0.0", message = "Rating deve ser maior ou igual a 0")
+    @DecimalMax(value = "5.0", message = "Rating deve ser menor ou igual a 5")
     private float rating;
 
     private String comment;

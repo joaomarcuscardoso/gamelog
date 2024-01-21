@@ -1,9 +1,7 @@
 package com.udesc.padroesdeprojeto.gamelog.dto;
 
 import com.udesc.padroesdeprojeto.gamelog.model.Review;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
@@ -16,8 +14,8 @@ public class ReviewConfigDTO {
     @NotNull(message = "Title é obrigatório!")
     private String title;
 
-    @DecimalMin(value = "0.0", message = "Rating deve ser maior ou igual a 0")
-    @DecimalMax(value = "5.0", message = "Rating deve ser menor ou igual a 5")
+    @Min(value = 0, message = "Rating deve ser maior ou igual a 0")
+    @Max(value = 5, message = "Rating deve ser menor ou igual a 5")
     private float rating;
 
     @NotNull(message = "Comment é obrigatório!")
