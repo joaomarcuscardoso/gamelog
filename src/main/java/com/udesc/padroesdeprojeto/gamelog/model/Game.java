@@ -21,7 +21,7 @@ import java.util.List;
 public class Game implements Games {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String name;
@@ -42,6 +42,12 @@ public class Game implements Games {
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Review> reviews;
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    private List<DetailedReview> detailedReviews;
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    private List<Dlc> dlcs;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

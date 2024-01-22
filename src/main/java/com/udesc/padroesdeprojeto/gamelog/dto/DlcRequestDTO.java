@@ -1,13 +1,11 @@
 package com.udesc.padroesdeprojeto.gamelog.dto;
 
-import com.udesc.padroesdeprojeto.gamelog.model.User;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class GameRequestDTO {
-    private Integer idUser;
+public class DlcRequestDTO {
+
     @NotNull(message = "Nome é obrigatório")
     private String name;
 
@@ -15,9 +13,7 @@ public class GameRequestDTO {
 
     private String developer;
 
-    @NotEmpty(message = "Descrição é obrigatório")
     private String description;
 
     private String CoverImage;
-
 }

@@ -63,7 +63,10 @@ public class User implements IObserver {
     private List<Game> games;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Dlc> dlcs;
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<DetailedReview> detailedReviews;
 
     @Column(nullable = true)
     private String token;

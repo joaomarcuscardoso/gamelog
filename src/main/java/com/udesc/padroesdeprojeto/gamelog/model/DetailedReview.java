@@ -1,11 +1,12 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.Reviews;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Data
@@ -15,26 +16,24 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "reviews")
+@Table(name = "detailed_reviews")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Review implements Reviews {
-
-    @Id
-    @GeneratedValue
-    private Integer id;
-    public Review(String title, float rating, String comment, User user){
+public class DetailedReview implements Reviews {
+    public DetailedReview(String title, float rating, String comment, User user){
         this.title = title;
         this.rating = rating;
         this.comment = comment;
         this.user = user;
     }
 
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     private String title;
 
-    //Entre 0 a 5 e pode ser uma nota tipo 3.5
-    @Min(value = 0, message = "Rating deve ser maior ou igual a 0")
-    @Max(value = 5, message = "Rating deve ser menor ou igual a 5")
+    @DecimalMin(value = "0.0", message = "Rating deve ser maior ou igual a 0")
+    @DecimalMax(value = "5.0", message = "Rating deve ser menor ou igual a 5")
     private float rating;
 
     private String comment;
@@ -51,8 +50,8 @@ public class Review implements Reviews {
     @JoinColumn(name = "dlc_id")
     private Dlc dlc;
 
-    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private SimpleConfig simpleConfig;
+    @OneToOne(mappedBy = "detailedReview", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DetailedConfig detailedConfig;
 
     @Override
     public Integer getGameId() {
