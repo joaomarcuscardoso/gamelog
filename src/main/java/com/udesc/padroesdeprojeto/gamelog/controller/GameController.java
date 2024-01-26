@@ -82,6 +82,9 @@ public class GameController {
         game.setUser(user);
         gameRepository.save(game);
 
+        // State
+        game.getState().draw();
+
         // Command
         Invoker invoker = Invoker.getInstance();
         EmailCommand emailCommand = new EmailCommand(mailSenderService, user, game);
