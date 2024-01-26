@@ -1,10 +1,9 @@
 package com.udesc.padroesdeprojeto.gamelog.state;
 
-public interface IGameState {
-    void draw();
-    void reviewStage();
-    void reviewComplete();
-    void finishing();
+import com.udesc.padroesdeprojeto.gamelog.model.Game;
 
+public interface IGameState {
+    void finishReview();
+    void archiveGame();
     String getGameState();
 }
