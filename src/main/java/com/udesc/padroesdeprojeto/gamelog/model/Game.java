@@ -2,7 +2,10 @@ package com.udesc.padroesdeprojeto.gamelog.model;
 
 import com.fasterxml.jackson.annotation.*;
 import com.udesc.padroesdeprojeto.gamelog.factory.Games;
+import com.udesc.padroesdeprojeto.gamelog.state.ArchivedState;
 import com.udesc.padroesdeprojeto.gamelog.state.IGameState;
+import com.udesc.padroesdeprojeto.gamelog.state.PublishedState;
+import com.udesc.padroesdeprojeto.gamelog.state.UnpublishedState;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -67,5 +70,17 @@ public class Game implements Games {
         }
 
         return user.getId();
+    }
+
+    public IGameState getIstate() {
+        if (this.state == null) {
+            return new UnpublishedState(this);
+        } else if (this.state.equals("Publicado")) {
+            return new PublishedState(this);
+        } else if (this.state.equals("Arquivado")) {
+            return new ArchivedState(this);
+        }
+
+        return new UnpublishedState(this);
     }
 }

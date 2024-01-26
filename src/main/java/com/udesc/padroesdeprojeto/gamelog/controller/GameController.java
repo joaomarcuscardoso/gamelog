@@ -21,6 +21,7 @@ import com.udesc.padroesdeprojeto.gamelog.repository.GameRepository;
 import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
 import com.udesc.padroesdeprojeto.gamelog.service.JavaMailSenderService;
 import com.udesc.padroesdeprojeto.gamelog.state.ArchivedState;
+import com.udesc.padroesdeprojeto.gamelog.state.IGameState;
 import com.udesc.padroesdeprojeto.gamelog.state.PublishedState;
 import com.udesc.padroesdeprojeto.gamelog.state.UnpublishedState;
 import jakarta.persistence.EntityNotFoundException;
@@ -83,10 +84,10 @@ public class GameController {
         game.setDescription(gameDto.getDescription());
         game.setCoverImage(gameDto.getCoverImage());
         game.setUser(user);
-        gameRepository.save(game);
 
         // State
-        game.setIstate(new PublishedState());
+        game.getIstate().unpublished();
+        gameRepository.save(game);
 
         // Command
         Invoker invoker = Invoker.getInstance();
@@ -163,12 +164,12 @@ public class GameController {
                 .body(fileContent);
     }
 
-    @PutMapping("/finishReview/{gameId}")
-    public ResponseEntity<Object> finishReview(@PathVariable Integer gameId) {
+    @PutMapping("/published/{gameId}")
+    public ResponseEntity<Object> published(@PathVariable Integer gameId) {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new EntityNotFoundException("Game not found"));
 
-        game.setIstate(new PublishedState());
+        game.getIstate().published();
         gameRepository.save(game);
 
         return ResponseEntity.status(HttpStatus.OK).body(game);
@@ -179,7 +180,7 @@ public class GameController {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new EntityNotFoundException("Game not found"));
 
-        game.setIstate(new ArchivedState());
+        game.getIstate().archiveGame();
         gameRepository.save(game);
 
         return ResponseEntity.status(HttpStatus.OK).body(game);
