@@ -73,14 +73,11 @@ public class GameController {
 
         User user = userRepository.findById(gameDto.getIdUser()).orElseThrow(() -> new EntityNotFoundException(("Usuario não encontrado")));
 
-        Game game = gameFactory.createGames();
+        Game game = gameFactory.setGames(gameDto.getName(),gameDto.getReleased(),gameDto.getDeveloper(),
+                gameDto.getDescription(),gameDto.getCoverImage());
 
-        game.setName(gameDto.getName());
-        game.setReleased(gameDto.getReleased());
-        game.setDeveloper(gameDto.getDeveloper());
-        game.setDescription(gameDto.getDescription());
-        game.setCoverImage(gameDto.getCoverImage());
         game.setUser(user);
+
         gameRepository.save(game);
 
         Invoker invoker = Invoker.getInstance();
@@ -99,14 +96,12 @@ public class GameController {
 
         Game game = gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException(("Game não encontrado")));
 
-        Dlc dlc = dlcFactory.createGames();
+        Dlc dlc = dlcFactory.setGames(dlcRequestDTO.getName(),dlcRequestDTO.getReleased(),dlcRequestDTO.getDeveloper(),
+                dlcRequestDTO.getDescription(),dlcRequestDTO.getCoverImage());
 
-        dlc.setGame(game);;
-        dlc.setName(dlcRequestDTO.getName());
-        dlc.setReleased(dlcRequestDTO.getReleased());
-        dlc.setDeveloper(dlcRequestDTO.getDeveloper());
-        dlc.setDescription(dlcRequestDTO.getDescription());
-        dlc.setCoverImage(dlcRequestDTO.getCoverImage());
+        dlc.setGame(game);
+        dlc.setExtraContentAdded(dlcRequestDTO.getExtraContentAdded());
+        
         dlcRepository.save(dlc);
 
         return ResponseEntity.status(HttpStatus.OK).body(dlc);
