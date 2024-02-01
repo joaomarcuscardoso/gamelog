@@ -3,9 +3,10 @@ package com.udesc.padroesdeprojeto.gamelog.state;
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
-public class UnpublishedState implements IGameState {
-    private Game game;
+public class UnpublishedState extends IGameState {
+    public UnpublishedState(Game game) {
+        super(game);
+    }
 
     @Override
     public void unpublished() {
@@ -16,7 +17,7 @@ public class UnpublishedState implements IGameState {
     public void published() {
         System.out.println("Finishing the review and moving to the published state.");
         this.game.setState("Publicado");
-        this.game.setIstate(new PublishedState(game));
+        this.game.setIstate(new PublishedState(this.game));
     }
 
     @Override
@@ -26,6 +27,6 @@ public class UnpublishedState implements IGameState {
 
     @Override
     public String getGameState() {
-        return this.game.getState();
+        return "Unplished";
     }
 }

@@ -15,8 +15,8 @@ import java.util.List;
 @Data
 @ToString
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -25,7 +25,7 @@ import java.util.List;
 public class Game implements Games {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
 
     private String name;
@@ -64,23 +64,24 @@ public class Game implements Games {
     @Transient
     private IGameState istate;
 
+    public void transitionToUnpublished() {
+        istate.unpublished();
+    }
+
+    public void transitionToPublished() {
+        istate.published();
+    }
+
+    public void transitionToArchived() {
+        istate.archiveGame();
+    }
+
+
     public Integer getUserId() {
         if (user == null) {
             return 0;
         }
 
         return user.getId();
-    }
-
-    public IGameState getIstate() {
-        if (this.state == null) {
-            return new UnpublishedState(this);
-        } else if (this.state.equals("Publicado")) {
-            return new PublishedState(this);
-        } else if (this.state.equals("Arquivado")) {
-            return new ArchivedState(this);
-        }
-
-        return new UnpublishedState(this);
     }
 }

@@ -2,10 +2,15 @@ package com.udesc.padroesdeprojeto.gamelog.state;
 
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
 
-public interface IGameState {
+public abstract class IGameState {
+    Game game;
 
-    void unpublished();
-    void published();
-    void archiveGame();
-    String getGameState();
+    public IGameState(Game game) {
+        this.game = game;
+    }
+
+    public abstract void unpublished();
+    public abstract void published();
+    public abstract void archiveGame();
+    public abstract  String getGameState();
 }

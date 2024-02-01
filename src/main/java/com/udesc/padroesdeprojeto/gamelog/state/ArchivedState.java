@@ -3,14 +3,14 @@ package com.udesc.padroesdeprojeto.gamelog.state;
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
-public class ArchivedState implements IGameState {
-    private Game game;
+public class ArchivedState extends IGameState {
+    public ArchivedState(Game game) {
+        super(game);
+    }
 
     @Override
     public void unpublished() {
         System.out.println("Cannot unpublished a game in the archived state");
-        this.game.setState("Arquivado");
     }
 
     @Override
@@ -21,7 +21,6 @@ public class ArchivedState implements IGameState {
     @Override
     public void archiveGame() {
         System.out.println("Game is already archived.");
-        this.game.setState("Arquivado");
     }
 
     @Override

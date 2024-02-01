@@ -31,6 +31,7 @@ import jakarta.validation.Valid;
 
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -56,6 +57,8 @@ public class GameController {
     private JavaMailSenderService mailSenderService;
     @Autowired
     private final DlcRepository dlcRepository;
+
+    private Game game;
 
 
 //    @GetMapping
@@ -86,7 +89,9 @@ public class GameController {
         game.setUser(user);
 
         // State
-        game.getIstate().unpublished();
+        game.setIstate(new UnpublishedState(game));
+        game.transitionToUnpublished();
+        this.game = game;
         gameRepository.save(game);
 
         // Command
@@ -166,10 +171,7 @@ public class GameController {
 
     @PutMapping("/published/{gameId}")
     public ResponseEntity<Object> published(@PathVariable Integer gameId) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new EntityNotFoundException("Game not found"));
-
-        game.getIstate().published();
+        game.transitionToPublished();
         gameRepository.save(game);
 
         return ResponseEntity.status(HttpStatus.OK).body(game);
@@ -177,10 +179,7 @@ public class GameController {
 
     @PutMapping("/archive/{gameId}")
     public ResponseEntity<Object> archiveGame(@PathVariable Integer gameId) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new EntityNotFoundException("Game not found"));
-
-        game.getIstate().archiveGame();
+        game.transitionToArchived();
         gameRepository.save(game);
 
         return ResponseEntity.status(HttpStatus.OK).body(game);
