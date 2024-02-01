@@ -2,6 +2,7 @@ package com.udesc.padroesdeprojeto.gamelog.controller;
 
 import com.udesc.padroesdeprojeto.gamelog.command.EmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.command.Invoker;
+import com.udesc.padroesdeprojeto.gamelog.command.TotalGamesEmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.dto.DlcRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
@@ -80,10 +81,14 @@ public class GameController {
 
         gameRepository.save(game);
 
+        long gameCount = gameRepository.countByUser(user);
+
         Invoker invoker = Invoker.getInstance();
         EmailCommand emailCommand = new EmailCommand(mailSenderService, user, game);
+        TotalGamesEmailCommand totalGamesEmailCommand= new TotalGamesEmailCommand(mailSenderService, gameCount, user);
 
         invoker.addCommandEmail(emailCommand);
+        invoker.addCommandEmail(totalGamesEmailCommand);
         invoker.executeCommandsEmail();
 
         return ResponseEntity.status(HttpStatus.OK).body(game);
@@ -101,7 +106,7 @@ public class GameController {
 
         dlc.setGame(game);
         dlc.setExtraContentAdded(dlcRequestDTO.getExtraContentAdded());
-        
+
         dlcRepository.save(dlc);
 
         return ResponseEntity.status(HttpStatus.OK).body(dlc);

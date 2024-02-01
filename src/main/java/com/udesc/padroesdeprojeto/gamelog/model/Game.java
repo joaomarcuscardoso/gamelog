@@ -21,7 +21,7 @@ import java.util.List;
 public class Game implements Games {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue()
     private Integer id;
 
     private String name;
