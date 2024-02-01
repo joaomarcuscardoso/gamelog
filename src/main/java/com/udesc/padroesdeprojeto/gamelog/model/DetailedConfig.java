@@ -13,7 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "detailed_reviews")
+@Table(name = "detailed_configs")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class DetailedConfig implements Configs {
 
@@ -41,6 +41,7 @@ public class DetailedConfig implements Configs {
     @Override
     public Integer getReviewId() {
         if (detailedReview == null) {
+            System.out.println("AAAA");
             return 0;
         }
 

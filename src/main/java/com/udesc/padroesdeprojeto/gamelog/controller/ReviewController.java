@@ -36,7 +36,7 @@ public class ReviewController {
     private final DetailedConfigRepository detailedConfigRepository;
 
     @Transactional
-    @PostMapping("{userId}")
+    @PostMapping("/{userId}")
     public ResponseEntity<Object> addReview(@PathVariable Integer userId,
                                             @RequestBody @Valid ReviewConfigDTO reviewConfigDTO){
         SimpleReviewFactory simpleReviewFactory = new SimpleReviewFactory();
@@ -79,53 +79,51 @@ public class ReviewController {
     }
 
     @Transactional
-    @PostMapping("/detailed/{userId}")
+    @PostMapping("/{userId}/detailed")
     public ResponseEntity<Object> addDetailedReview(@PathVariable Integer userId,
                                                     @RequestBody @Valid DetailedReviewCondifDTO detailedReviewCondifDTO){
-        DetailedFactory detailedFactory = new DetailedFactory();
+            DetailedFactory detailedFactory = new DetailedFactory();
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(("Usuario não encontrado")));
+            User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(("Usuario não encontrado")));
 
-        System.out.println(detailedReviewCondifDTO.getRating());
+            float floatRating = detailedReviewCondifDTO.getRating();
 
-        float floatRating = detailedReviewCondifDTO.getRating();
-        System.out.println(floatRating);
+            DetailedReview detailedReview = detailedFactory.createReview(
+                    detailedReviewCondifDTO.getTitle(),
+                    floatRating,
+                    detailedReviewCondifDTO.getComment(),
+                    user);
 
-        DetailedReview detailedReview = detailedFactory.createReview(
-                detailedReviewCondifDTO.getTitle(),
-                floatRating,
-                detailedReviewCondifDTO.getComment(),
-                user);
+            if(detailedReviewCondifDTO.getIdGame() == null){
+                Dlc dlc = dlcRepository.
+                        findById(detailedReviewCondifDTO.getIdDlc()).
+                        orElseThrow(() ->
+                                new EntityNotFoundException(("Dlc não encontrada")));
+                detailedReview.setDlc(dlc);
+            } else{
+                Game game = gameRepository.
+                        findById(detailedReviewCondifDTO.getIdGame()).
+                        orElseThrow(() ->
+                                new EntityNotFoundException(("Game não encontrado")));
+                detailedReview.setGame(game);
+            }
 
-        if(detailedReviewCondifDTO.getIdGame() == null){
-            Dlc dlc = dlcRepository.
-                    findById(detailedReviewCondifDTO.getIdDlc()).
-                    orElseThrow(() ->
-                            new EntityNotFoundException(("Dlc não encontrada")));
-            detailedReview.setDlc(dlc);
-        } else{
-            Game game = gameRepository.
-                    findById(detailedReviewCondifDTO.getIdGame()).
-                    orElseThrow(() ->
-                            new EntityNotFoundException(("Game não encontrado")));
-            detailedReview.setGame(game);
-        }
+            detailedReview.setRecommendation(detailedReviewCondifDTO.isRecommendation());
+            detailedReview.setPros(detailedReviewCondifDTO.getPros());
+            detailedReview.setCons(detailedReviewCondifDTO.getCons());
 
-        detailedReview.setRecommendation(detailedReviewCondifDTO.isRecommendation());
-        detailedReview.setPros(detailedReviewCondifDTO.getPros());
-        detailedReview.setCons(detailedReviewCondifDTO.getCons());
+            detailedReviewRepository.save(detailedReview);
 
-        detailedReviewRepository.save(detailedReview);
+            DetailedConfig detailedConfig = detailedFactory.createConfigs(
+                    detailedReviewCondifDTO.getPlatform(),
+                    detailedReviewCondifDTO.getCompletion()
+            );
 
-        DetailedConfig detailedConfig = detailedFactory.createConfigs(
-                detailedReviewCondifDTO.getPlatform(), detailedReviewCondifDTO.getCompletion());
+            detailedConfig.setSetup(detailedReviewCondifDTO.getSetup());
+            detailedConfig.setGameConfigs(detailedReviewCondifDTO.getGameConfigs());
+            detailedConfig.setDetailedReview(detailedReview);
 
-        detailedConfig.setSetup(detailedReviewCondifDTO.getSetup());
-        detailedConfig.setGameConfigs(detailedReviewCondifDTO.getGameConfigs());
-        detailedConfig.setDetailedReview(detailedReview);
-
-        detailedConfigRepository.save(detailedConfig);
-
-        return ResponseEntity.status(HttpStatus.OK).body(detailedConfig);
+             detailedConfigRepository.save(detailedConfig);
+            return ResponseEntity.status(HttpStatus.OK).body(detailedConfig);
     }
 }

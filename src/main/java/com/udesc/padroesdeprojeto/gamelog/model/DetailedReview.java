@@ -37,6 +37,7 @@ public class DetailedReview implements Reviews {
 
     @Min(value = 0, message = "Rating deve ser maior ou igual a 0")
     @Max(value = 5, message = "Rating deve ser menor ou igual a 5")
+    @NotNull(message = "Rating não pode ser nulo")
     private float rating;
 
     private String comment;
