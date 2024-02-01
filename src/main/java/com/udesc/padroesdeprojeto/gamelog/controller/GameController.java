@@ -6,6 +6,7 @@ import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGeneratorFacade;
 import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
+import com.udesc.padroesdeprojeto.gamelog.command.TotalGamesEmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.dto.DlcRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
@@ -80,12 +81,9 @@ public class GameController {
 
         User user = userRepository.findById(gameDto.getIdUser()).orElseThrow(() -> new EntityNotFoundException(("Usuario não encontrado")));
 
-        Game game = gameFactory.createGames();
-        game.setName(gameDto.getName());
-        game.setReleased(gameDto.getReleased());
-        game.setDeveloper(gameDto.getDeveloper());
-        game.setDescription(gameDto.getDescription());
-        game.setCoverImage(gameDto.getCoverImage());
+        Game game = gameFactory.setGames(gameDto.getName(),gameDto.getReleased(),gameDto.getDeveloper(),
+                gameDto.getDescription(),gameDto.getCoverImage());
+
         game.setUser(user);
 
         // State
@@ -94,10 +92,16 @@ public class GameController {
         this.game = game;
         gameRepository.save(game);
 
+        gameRepository.save(game);
+
+        long gameCount = gameRepository.countByUser(user);
+
         // Command
         Invoker invoker = Invoker.getInstance();
         EmailCommand emailCommand = new EmailCommand(mailSenderService, user, game);
+        TotalGamesEmailCommand totalGamesEmailCommand= new TotalGamesEmailCommand(mailSenderService, gameCount, user);
         invoker.addCommandEmail(emailCommand);
+        invoker.addCommandEmail(totalGamesEmailCommand);
         invoker.executeCommandsEmail();
 
         return ResponseEntity.status(HttpStatus.OK).body(game);
@@ -110,14 +114,12 @@ public class GameController {
 
         Game game = gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException(("Game não encontrado")));
 
-        Dlc dlc = dlcFactory.createGames();
+        Dlc dlc = dlcFactory.setGames(dlcRequestDTO.getName(),dlcRequestDTO.getReleased(),dlcRequestDTO.getDeveloper(),
+                dlcRequestDTO.getDescription(),dlcRequestDTO.getCoverImage());
 
-        dlc.setGame(game);;
-        dlc.setName(dlcRequestDTO.getName());
-        dlc.setReleased(dlcRequestDTO.getReleased());
-        dlc.setDeveloper(dlcRequestDTO.getDeveloper());
-        dlc.setDescription(dlcRequestDTO.getDescription());
-        dlc.setCoverImage(dlcRequestDTO.getCoverImage());
+        dlc.setGame(game);
+        dlc.setExtraContentAdded(dlcRequestDTO.getExtraContentAdded());
+
         dlcRepository.save(dlc);
 
         return ResponseEntity.status(HttpStatus.OK).body(dlc);

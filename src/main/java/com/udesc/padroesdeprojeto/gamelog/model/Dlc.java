@@ -40,6 +40,8 @@ public class Dlc implements Games {
     @Nullable
     private String CoverImage;
 
+    private String extraContentAdded;
+
     @OneToMany(mappedBy = "dlc", cascade = CascadeType.ALL)
     private List<Review> reviews;
 

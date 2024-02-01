@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.Reviews;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -19,6 +19,11 @@ import lombok.*;
 @Table(name = "detailed_reviews")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class DetailedReview implements Reviews {
+
+    @Id
+    @GeneratedValue()
+    private Integer id;
+
     public DetailedReview(String title, float rating, String comment, User user){
         this.title = title;
         this.rating = rating;
@@ -26,17 +31,28 @@ public class DetailedReview implements Reviews {
         this.user = user;
     }
 
-    @Id
-    @GeneratedValue
-    private Integer id;
+
 
     private String title;
 
-    @DecimalMin(value = "0.0", message = "Rating deve ser maior ou igual a 0")
-    @DecimalMax(value = "5.0", message = "Rating deve ser menor ou igual a 5")
+    @Min(value = 0, message = "Rating deve ser maior ou igual a 0")
+    @Max(value = 5, message = "Rating deve ser menor ou igual a 5")
+    @NotNull(message = "Rating não pode ser nulo")
     private float rating;
 
     private String comment;
+
+    private boolean recommendation;
+
+    @ElementCollection
+    @CollectionTable(name = "detailed_review_pros", joinColumns = @JoinColumn(name = "detailed_review_id"))
+    @Column(name = "pro")
+    private List<String> pros;
+
+    @ElementCollection
+    @CollectionTable(name = "detailed_review_cons", joinColumns = @JoinColumn(name = "detailed_review_id"))
+    @Column(name = "con")
+    private List<String> cons;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
