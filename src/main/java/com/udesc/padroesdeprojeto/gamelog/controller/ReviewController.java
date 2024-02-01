@@ -1,5 +1,6 @@
 package com.udesc.padroesdeprojeto.gamelog.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.DetailedFactory;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.SimpleReviewFactory;
 import com.udesc.padroesdeprojeto.gamelog.dto.DetailedReviewCondifDTO;
@@ -85,9 +86,14 @@ public class ReviewController {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(("Usuario não encontrado")));
 
+        System.out.println(detailedReviewCondifDTO.getRating());
+
+        float floatRating = detailedReviewCondifDTO.getRating();
+        System.out.println(floatRating);
+
         DetailedReview detailedReview = detailedFactory.createReview(
                 detailedReviewCondifDTO.getTitle(),
-                detailedReviewCondifDTO.getRating(),
+                floatRating,
                 detailedReviewCondifDTO.getComment(),
                 user);
 
@@ -104,6 +110,10 @@ public class ReviewController {
                             new EntityNotFoundException(("Game não encontrado")));
             detailedReview.setGame(game);
         }
+
+        detailedReview.setRecommendation(detailedReviewCondifDTO.isRecommendation());
+        detailedReview.setPros(detailedReviewCondifDTO.getPros());
+        detailedReview.setCons(detailedReviewCondifDTO.getCons());
 
         detailedReviewRepository.save(detailedReview);
 

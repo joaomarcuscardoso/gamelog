@@ -23,7 +23,7 @@ public class DetailedConfig implements Configs {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue()
     private Integer id;
 
     private String platform;
