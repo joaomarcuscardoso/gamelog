@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/category")
 @RequiredArgsConstructor
@@ -26,5 +28,11 @@ public class CategoryController {
     @ResponseBody
     public String getAllNamesCategories(){
         return categoryInitializer.getRootCategory().getNames();
+    }
+
+    @GetMapping("/allGames")
+    @ResponseBody
+    public List<String> getAllgamesCategories(){
+        return categoryInitializer.getRootCategory().getGames();
     }
 }

@@ -48,4 +48,15 @@ public class AbstractCategory implements Category{
         names.append("]");
         return names.toString();
     }
+
+    @Override
+    public List<String> getGames() {
+        List<String> games = new ArrayList<>();
+        for (Category category : categoryList) {
+            if (category != null) {
+                games.addAll(category.getGames());
+            }
+        }
+        return games;
+    }
 }
