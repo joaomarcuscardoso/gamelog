@@ -3,10 +3,13 @@ package com.udesc.padroesdeprojeto.gamelog.controller;
 import ch.qos.logback.core.net.SyslogOutputStream;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.DetailedFactory;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.SimpleReviewFactory;
+import com.udesc.padroesdeprojeto.gamelog.command.EmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.dto.DetailedReviewCondifDTO;
 import com.udesc.padroesdeprojeto.gamelog.dto.ReviewConfigDTO;
 import com.udesc.padroesdeprojeto.gamelog.model.*;
 import com.udesc.padroesdeprojeto.gamelog.repository.*;
+import com.udesc.padroesdeprojeto.gamelog.service.JavaMailSenderService;
+import com.udesc.padroesdeprojeto.gamelog.visitor.EmailSenderVisitor;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -15,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/review")
@@ -34,6 +39,8 @@ public class ReviewController {
     private final DetailedReviewRepository detailedReviewRepository;
     @Autowired
     private final DetailedConfigRepository detailedConfigRepository;
+    @Autowired
+    private JavaMailSenderService mailSenderService;
 
     @Transactional
     @PostMapping("/{userId}")
@@ -125,5 +132,24 @@ public class ReviewController {
 
              detailedConfigRepository.save(detailedConfig);
             return ResponseEntity.status(HttpStatus.OK).body(detailedConfig);
+    }
+
+    @GetMapping("/revMail/{userId}")
+    public void enviarEmail(@PathVariable Integer userId){
+
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(("Usuario não encontrado")));
+        List<Review> reviewList = reviewRepository.findByUser(user);
+        List<DetailedReview> detailedReviewsList = detailedReviewRepository.findByUser(user);
+
+        EmailSenderVisitor emailSenderVisitor = new EmailSenderVisitor(mailSenderService, user);
+
+        for(DetailedReview detailedReview : detailedReviewsList){
+            detailedReview.accept(emailSenderVisitor);
+        }
+
+        for(Review review : reviewList){
+            review.accept(emailSenderVisitor);
+        }
     }
 }

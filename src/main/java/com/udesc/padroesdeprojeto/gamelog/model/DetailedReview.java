@@ -3,6 +3,7 @@ package com.udesc.padroesdeprojeto.gamelog.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.udesc.padroesdeprojeto.gamelog.abstractFactory.Reviews;
+import com.udesc.padroesdeprojeto.gamelog.visitor.ReviewVisitor;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -94,5 +95,10 @@ public class DetailedReview implements Reviews {
         }
 
         return dlc.getId();
+    }
+
+    @Override
+    public void accept(ReviewVisitor visitor) {
+        visitor.visit(this);
     }
 }
