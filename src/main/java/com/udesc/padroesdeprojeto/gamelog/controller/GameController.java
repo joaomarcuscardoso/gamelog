@@ -3,7 +3,6 @@ package com.udesc.padroesdeprojeto.gamelog.controller;
 import com.udesc.padroesdeprojeto.gamelog.command.EmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.command.Invoker;
 import com.udesc.padroesdeprojeto.gamelog.decorator.FavoriteStatusDecorator;
-import com.udesc.padroesdeprojeto.gamelog.decorator.GameDecorator;
 import com.udesc.padroesdeprojeto.gamelog.decorator.PlatinumStatusDecorator;
 import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
@@ -11,12 +10,7 @@ import com.udesc.padroesdeprojeto.gamelog.facade.FileGeneratorFacade;
 import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
 import com.udesc.padroesdeprojeto.gamelog.command.TotalGamesEmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.dto.DlcRequestDTO;
-import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
-import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
-import com.udesc.padroesdeprojeto.gamelog.facade.FileGeneratorFacade;
 import com.udesc.padroesdeprojeto.gamelog.factory.DlcFactory;
-import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
-import com.udesc.padroesdeprojeto.gamelog.factory.Games;
 import com.udesc.padroesdeprojeto.gamelog.model.Dlc;
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
@@ -24,18 +18,13 @@ import com.udesc.padroesdeprojeto.gamelog.repository.DlcRepository;
 import com.udesc.padroesdeprojeto.gamelog.repository.GameRepository;
 import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
 import com.udesc.padroesdeprojeto.gamelog.service.JavaMailSenderService;
-import com.udesc.padroesdeprojeto.gamelog.state.ArchivedState;
-import com.udesc.padroesdeprojeto.gamelog.state.IGameState;
-import com.udesc.padroesdeprojeto.gamelog.state.PublishedState;
 import com.udesc.padroesdeprojeto.gamelog.state.UnpublishedState;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -47,7 +36,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -100,10 +88,8 @@ public class GameController {
         // Decorator
         if (game.isFavorite()) {
             game.setDecorator(new FavoriteStatusDecorator(game));
-            game.setName(game.getDecorator().getName());
         } else if (game.isPlatinum()) {
             game.setDecorator(new PlatinumStatusDecorator(game));
-            game.setName(game.getDecorator().getName());
         }
 
         gameRepository.save(game);

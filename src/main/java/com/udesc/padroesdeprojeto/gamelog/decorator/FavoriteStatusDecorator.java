@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 public class FavoriteStatusDecorator implements  GameDecorator{
     private Game decoratedGame;
     @Override
-    public String getName() {
+    public String getNameDecored() {
         return decoratedGame.getName() + " - (FAVORITO)";
     }
 }

@@ -100,4 +100,12 @@ public class Game implements Games {
 
         return user.getId();
     }
+
+    public String getNameDecorator() {
+        if (decorator != null) {
+            return this.decorator.getNameDecored();
+        }
+
+        return this.name;
+    }
 }

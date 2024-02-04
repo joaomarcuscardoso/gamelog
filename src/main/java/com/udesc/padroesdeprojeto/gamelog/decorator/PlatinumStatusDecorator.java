@@ -8,7 +8,7 @@ public class PlatinumStatusDecorator implements GameDecorator {
     private Game decoratedGame;
 
     @Override
-    public String getName() {
+    public String getNameDecored() {
         return decoratedGame.getName() + " - (PLATINUM)";
     }
 }
