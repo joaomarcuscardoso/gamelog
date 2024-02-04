@@ -2,17 +2,15 @@ package com.udesc.padroesdeprojeto.gamelog.controller;
 
 import com.udesc.padroesdeprojeto.gamelog.command.EmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.command.Invoker;
+import com.udesc.padroesdeprojeto.gamelog.decorator.FavoriteStatusDecorator;
+import com.udesc.padroesdeprojeto.gamelog.decorator.PlatinumStatusDecorator;
 import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGeneratorFacade;
 import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
+import com.udesc.padroesdeprojeto.gamelog.command.TotalGamesEmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.dto.DlcRequestDTO;
-import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
-import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
-import com.udesc.padroesdeprojeto.gamelog.facade.FileGeneratorFacade;
 import com.udesc.padroesdeprojeto.gamelog.factory.DlcFactory;
-import com.udesc.padroesdeprojeto.gamelog.factory.GameFactory;
-import com.udesc.padroesdeprojeto.gamelog.factory.Games;
 import com.udesc.padroesdeprojeto.gamelog.model.Dlc;
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
@@ -20,8 +18,8 @@ import com.udesc.padroesdeprojeto.gamelog.repository.DlcRepository;
 import com.udesc.padroesdeprojeto.gamelog.repository.GameRepository;
 import com.udesc.padroesdeprojeto.gamelog.repository.UserRepository;
 import com.udesc.padroesdeprojeto.gamelog.service.JavaMailSenderService;
+import com.udesc.padroesdeprojeto.gamelog.state.UnpublishedState;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
@@ -53,11 +51,13 @@ public class GameController {
     @Autowired
     private final DlcRepository dlcRepository;
 
+    private Game game;
 
-//    @GetMapping
-//    public ResponseEntity<List<Game>> listAll() {
-//        return ResponseEntity.status(HttpStatus.OK).body(gameRepository.findAll());
-//    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Game>> listAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(gameRepository.findAll());
+    }
 
     @GetMapping("/find/{id}")
     public ResponseEntity<Object> getById(@PathVariable Integer id){
@@ -73,19 +73,34 @@ public class GameController {
 
         User user = userRepository.findById(gameDto.getIdUser()).orElseThrow(() -> new EntityNotFoundException(("Usuario não encontrado")));
 
-        Game game = gameFactory.createGames();
-        game.setName(gameDto.getName());
-        game.setReleased(gameDto.getReleased());
-        game.setDeveloper(gameDto.getDeveloper());
-        game.setDescription(gameDto.getDescription());
-        game.setCoverImage(gameDto.getCoverImage());
+        Game game = gameFactory.setGames(gameDto.getName(),gameDto.getReleased(),gameDto.getDeveloper(),
+                gameDto.getDescription(),gameDto.getCoverImage());
+
         game.setUser(user);
+        game.setFavorite(gameDto.isFavorite());
+        game.setPlatinum(gameDto.isPlatinum());
+
+        // State
+        game.setIstate(new UnpublishedState(game));
+        game.transitionToUnpublished();
+        this.game = game;
+
+        // Decorator
+        if (game.isFavorite()) {
+            game.setDecorator(new FavoriteStatusDecorator(game));
+        } else if (game.isPlatinum()) {
+            game.setDecorator(new PlatinumStatusDecorator(game));
+        }
+
         gameRepository.save(game);
 
         // Command
+        long gameCount = gameRepository.countByUser(user);
         Invoker invoker = Invoker.getInstance();
         EmailCommand emailCommand = new EmailCommand(mailSenderService, user, game);
+        TotalGamesEmailCommand totalGamesEmailCommand= new TotalGamesEmailCommand(mailSenderService, gameCount, user);
         invoker.addCommandEmail(emailCommand);
+        invoker.addCommandEmail(totalGamesEmailCommand);
         invoker.executeCommandsEmail();
 
         return ResponseEntity.status(HttpStatus.OK).body(game);
@@ -98,14 +113,12 @@ public class GameController {
 
         Game game = gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException(("Game não encontrado")));
 
-        Dlc dlc = dlcFactory.createGames();
+        Dlc dlc = dlcFactory.setGames(dlcRequestDTO.getName(),dlcRequestDTO.getReleased(),dlcRequestDTO.getDeveloper(),
+                dlcRequestDTO.getDescription(),dlcRequestDTO.getCoverImage());
 
-        dlc.setGame(game);;
-        dlc.setName(dlcRequestDTO.getName());
-        dlc.setReleased(dlcRequestDTO.getReleased());
-        dlc.setDeveloper(dlcRequestDTO.getDeveloper());
-        dlc.setDescription(dlcRequestDTO.getDescription());
-        dlc.setCoverImage(dlcRequestDTO.getCoverImage());
+        dlc.setGame(game);
+        dlc.setExtraContentAdded(dlcRequestDTO.getExtraContentAdded());
+
         dlcRepository.save(dlc);
 
         return ResponseEntity.status(HttpStatus.OK).body(dlc);
@@ -155,5 +168,21 @@ public class GameController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(fileContent);
+    }
+
+    @PutMapping("/published/{gameId}")
+    public ResponseEntity<Object> published(@PathVariable Integer gameId) {
+        game.transitionToPublished();
+        gameRepository.save(game);
+
+        return ResponseEntity.status(HttpStatus.OK).body(game);
+    }
+
+    @PutMapping("/archive/{gameId}")
+    public ResponseEntity<Object> archiveGame(@PathVariable Integer gameId) {
+        game.transitionToArchived();
+        gameRepository.save(game);
+
+        return ResponseEntity.status(HttpStatus.OK).body(game);
     }
 }

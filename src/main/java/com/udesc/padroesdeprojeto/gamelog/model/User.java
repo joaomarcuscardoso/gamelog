@@ -44,6 +44,7 @@ public class User implements IObserver {
     @NotBlank
     @Size(min=8)
     @JsonIgnore
+    @JsonIgnoreProperties
     private String password;
 
     @NotBlank

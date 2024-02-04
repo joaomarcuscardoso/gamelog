@@ -7,7 +7,7 @@ public class Invoker {
 
     private static Invoker instance;
 
-    private final List<EmailCommand> emailCommandList = new ArrayList<>();
+    private final List<Command> commandList = new ArrayList<>();
 
     private Invoker(){}
 
@@ -18,14 +18,14 @@ public class Invoker {
         return instance;
     }
 
-    public void addCommandEmail(EmailCommand emailCommand){
-        emailCommandList.add(emailCommand);
+    public void addCommandEmail(Command command){
+        commandList.add(command);
     }
 
     public void executeCommandsEmail(){
-        for(EmailCommand command : emailCommandList){
+        for(Command command : commandList){
             command.execute();
         }
-        emailCommandList.clear();
+        commandList.clear();
     }
 }

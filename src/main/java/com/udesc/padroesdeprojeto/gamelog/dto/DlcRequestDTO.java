@@ -16,4 +16,6 @@ public class DlcRequestDTO {
     private String description;
 
     private String CoverImage;
+
+    private String extraContentAdded;
 }

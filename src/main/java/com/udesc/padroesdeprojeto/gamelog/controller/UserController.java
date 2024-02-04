@@ -1,5 +1,6 @@
 package com.udesc.padroesdeprojeto.gamelog.controller;
 
+import com.udesc.padroesdeprojeto.gamelog.adapter.EmailValidatorProtocol;
 import com.udesc.padroesdeprojeto.gamelog.dto.LoginRequest;
 import com.udesc.padroesdeprojeto.gamelog.dto.SignupRequest;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
@@ -56,6 +57,15 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<Object> processSignupForm(@RequestBody @Valid SignupRequest signupRequest) {
+        String email = signupRequest.getEmail();
+
+        EmailValidatorProtocol emailValidator = new EmailValidatorProtocol();
+        boolean isValidEmail = emailValidator.isValidEmail(email);
+
+        if (!isValidEmail) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Padrão de Email invalido.");
+        }
+
         Boolean existUser = repository.existsByUsernameOrEmail(signupRequest.getUsername(), signupRequest.getEmail());
         if (existUser)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username ou email já cadastrado");

@@ -1,6 +1,7 @@
 package com.udesc.padroesdeprojeto.gamelog.factory;
 
 import com.udesc.padroesdeprojeto.gamelog.model.Game;
+import com.udesc.padroesdeprojeto.gamelog.model.User;
 
 public class GameFactory extends GamesFactory{
 
@@ -15,7 +16,20 @@ public class GameFactory extends GamesFactory{
         return instance;
     }
     @Override
-    public Game createGames() {
+    protected Game createGames() {
         return new Game();
+    }
+
+    @Override
+    public Game setGames(String name, String released, String developer, String description, String coverImage) {
+        Game game = this.createGames();
+
+        game.setName(name);
+        game.setReleased(released);
+        game.setDeveloper(developer);
+        game.setDescription(description);
+        game.setCoverImage(coverImage);
+
+        return game;
     }
 }

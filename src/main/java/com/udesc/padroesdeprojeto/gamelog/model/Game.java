@@ -1,7 +1,12 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
 import com.fasterxml.jackson.annotation.*;
+import com.udesc.padroesdeprojeto.gamelog.decorator.GameDecorator;
 import com.udesc.padroesdeprojeto.gamelog.factory.Games;
+import com.udesc.padroesdeprojeto.gamelog.state.ArchivedState;
+import com.udesc.padroesdeprojeto.gamelog.state.IGameState;
+import com.udesc.padroesdeprojeto.gamelog.state.PublishedState;
+import com.udesc.padroesdeprojeto.gamelog.state.UnpublishedState;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,7 +26,7 @@ import java.util.List;
 public class Game implements Games {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
 
     private String name;
@@ -29,6 +34,18 @@ public class Game implements Games {
     @Column(nullable = false)
     @Nullable
     private String released;
+
+    @Column(nullable = false)
+    @Nullable
+    @JsonIgnore
+    @JsonIgnoreProperties
+    private boolean platinum;
+
+    @Column(nullable = false)
+    @Nullable
+    @JsonIgnore
+    @JsonIgnoreProperties
+    private boolean favorite;
 
     @Column(nullable = false)
     @Nullable
@@ -53,11 +70,42 @@ public class Game implements Games {
     @JoinColumn(name = "user_id")
     private User user;
 
+
+    @Column(name = "state")
+    private String state;
+
+    @Transient
+    private IGameState istate;
+
+    @Transient
+    private GameDecorator decorator;
+
+    public void transitionToUnpublished() {
+        istate.unpublished();
+    }
+
+    public void transitionToPublished() {
+        istate.published();
+    }
+
+    public void transitionToArchived() {
+        istate.archiveGame();
+    }
+
+
     public Integer getUserId() {
         if (user == null) {
             return 0;
         }
 
         return user.getId();
+    }
+
+    public String getNameDecorator() {
+        if (decorator != null) {
+            return this.decorator.getNameDecored();
+        }
+
+        return this.name;
     }
 }
