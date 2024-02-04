@@ -77,20 +77,11 @@ public class GameController {
                 gameDto.getDescription(),gameDto.getCoverImage());
 
         game.setUser(user);
-        game.setFavorite(gameDto.isFavorite());
-        game.setPlatinum(gameDto.isPlatinum());
 
         // State
         game.setIstate(new UnpublishedState(game));
         game.transitionToUnpublished();
         this.game = game;
-
-        // Decorator
-        if (game.isFavorite()) {
-            game.setDecorator(new FavoriteStatusDecorator(game));
-        } else if (game.isPlatinum()) {
-            game.setDecorator(new PlatinumStatusDecorator(game));
-        }
 
         gameRepository.save(game);
 
@@ -181,6 +172,26 @@ public class GameController {
     @PutMapping("/archive/{gameId}")
     public ResponseEntity<Object> archiveGame(@PathVariable Integer gameId) {
         game.transitionToArchived();
+        gameRepository.save(game);
+
+        return ResponseEntity.status(HttpStatus.OK).body(game);
+    }
+
+    @PutMapping("/favorite/{gameId}")
+    public ResponseEntity<Object> favorite(@PathVariable Integer gameId) {
+        Game game = gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException(("Game não encontrado")));
+        game.setDecorator(new FavoriteStatusDecorator(game));
+        game.setFavorite(true);
+        gameRepository.save(game);
+
+        return ResponseEntity.status(HttpStatus.OK).body(game);
+    }
+
+    @PutMapping("/platinum/{gameId}")
+    public ResponseEntity<Object> platinum(@PathVariable Integer gameId) {
+        Game game = gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException(("Game não encontrado")));
+        game.setDecorator(new PlatinumStatusDecorator(game));
+        game.setPlatinum(true);
         gameRepository.save(game);
 
         return ResponseEntity.status(HttpStatus.OK).body(game);

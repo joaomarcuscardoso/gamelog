@@ -20,8 +20,4 @@ public class GameRequestDTO {
     private String description;
 
     private String CoverImage;
-
-    private boolean platinum;
-
-    private boolean favorite;
 }
