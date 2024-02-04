@@ -2,6 +2,9 @@ package com.udesc.padroesdeprojeto.gamelog.controller;
 
 import com.udesc.padroesdeprojeto.gamelog.command.EmailCommand;
 import com.udesc.padroesdeprojeto.gamelog.command.Invoker;
+import com.udesc.padroesdeprojeto.gamelog.decorator.FavoriteStatusDecorator;
+import com.udesc.padroesdeprojeto.gamelog.decorator.GameDecorator;
+import com.udesc.padroesdeprojeto.gamelog.decorator.PlatinumStatusDecorator;
 import com.udesc.padroesdeprojeto.gamelog.dto.GameRequestDTO;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGenerator;
 import com.udesc.padroesdeprojeto.gamelog.facade.FileGeneratorFacade;
@@ -44,6 +47,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -61,11 +65,22 @@ public class GameController {
 
     private Game game;
 
+    private List<Game> games = new ArrayList<>();
 
-//    @GetMapping
-//    public ResponseEntity<List<Game>> listAll() {
-//        return ResponseEntity.status(HttpStatus.OK).body(gameRepository.findAll());
-//    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Game>> listAll() {
+        games.forEach(game -> {
+            if (game.isFavorite()) {
+                GameDecorator favorite = new FavoriteStatusDecorator(game);
+                game.setName(favorite.getName());
+            } else if (game.isPlatinum()) {
+                GameDecorator favorite = new PlatinumStatusDecorator(game);
+                game.setName(favorite.getName());
+            }
+        });
+        return ResponseEntity.status(HttpStatus.OK).body(games);
+    }
 
     @GetMapping("/find/{id}")
     public ResponseEntity<Object> getById(@PathVariable Integer id){
@@ -85,16 +100,19 @@ public class GameController {
                 gameDto.getDescription(),gameDto.getCoverImage());
 
         game.setUser(user);
+        game.setFavorite(gameDto.isFavorite());
+        game.setPlatinum(gameDto.isPlatinum());
 
         // State
         game.setIstate(new UnpublishedState(game));
         game.transitionToUnpublished();
         this.game = game;
+        games.add(game);
+
         gameRepository.save(game);
 
-        long gameCount = gameRepository.countByUser(user);
-
         // Command
+        long gameCount = gameRepository.countByUser(user);
         Invoker invoker = Invoker.getInstance();
         EmailCommand emailCommand = new EmailCommand(mailSenderService, user, game);
         TotalGamesEmailCommand totalGamesEmailCommand= new TotalGamesEmailCommand(mailSenderService, gameCount, user);

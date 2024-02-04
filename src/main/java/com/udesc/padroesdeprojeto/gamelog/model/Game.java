@@ -1,6 +1,7 @@
 package com.udesc.padroesdeprojeto.gamelog.model;
 
 import com.fasterxml.jackson.annotation.*;
+import com.udesc.padroesdeprojeto.gamelog.decorator.GameDecorator;
 import com.udesc.padroesdeprojeto.gamelog.factory.Games;
 import com.udesc.padroesdeprojeto.gamelog.state.ArchivedState;
 import com.udesc.padroesdeprojeto.gamelog.state.IGameState;
@@ -33,6 +34,18 @@ public class Game implements Games {
     @Column(nullable = false)
     @Nullable
     private String released;
+
+    @Column(nullable = false)
+    @Nullable
+    @JsonIgnore
+    @JsonIgnoreProperties
+    private boolean platinum;
+
+    @Column(nullable = false)
+    @Nullable
+    @JsonIgnore
+    @JsonIgnoreProperties
+    private boolean favorite;
 
     @Column(nullable = false)
     @Nullable
@@ -84,4 +97,6 @@ public class Game implements Games {
 
         return user.getId();
     }
+
+
 }

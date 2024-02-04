@@ -1,5 +1,6 @@
 package com.udesc.padroesdeprojeto.gamelog.factory;
 
+import com.udesc.padroesdeprojeto.gamelog.model.Game;
 import com.udesc.padroesdeprojeto.gamelog.model.User;
 import org.springframework.stereotype.Service;
 
