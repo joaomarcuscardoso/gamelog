@@ -77,6 +77,9 @@ public class Game implements Games {
     @Transient
     private IGameState istate;
 
+    @Transient
+    private GameDecorator decorator;
+
     public void transitionToUnpublished() {
         istate.unpublished();
     }
@@ -97,6 +100,4 @@ public class Game implements Games {
 
         return user.getId();
     }
-
-
 }

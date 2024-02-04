@@ -65,21 +65,10 @@ public class GameController {
 
     private Game game;
 
-    private List<Game> games = new ArrayList<>();
-
 
     @GetMapping("/all")
     public ResponseEntity<List<Game>> listAll() {
-        games.forEach(game -> {
-            if (game.isFavorite()) {
-                GameDecorator favorite = new FavoriteStatusDecorator(game);
-                game.setName(favorite.getName());
-            } else if (game.isPlatinum()) {
-                GameDecorator favorite = new PlatinumStatusDecorator(game);
-                game.setName(favorite.getName());
-            }
-        });
-        return ResponseEntity.status(HttpStatus.OK).body(games);
+        return ResponseEntity.status(HttpStatus.OK).body(gameRepository.findAll());
     }
 
     @GetMapping("/find/{id}")
@@ -107,7 +96,15 @@ public class GameController {
         game.setIstate(new UnpublishedState(game));
         game.transitionToUnpublished();
         this.game = game;
-        games.add(game);
+
+        // Decorator
+        if (game.isFavorite()) {
+            game.setDecorator(new FavoriteStatusDecorator(game));
+            game.setName(game.getDecorator().getName());
+        } else if (game.isPlatinum()) {
+            game.setDecorator(new PlatinumStatusDecorator(game));
+            game.setName(game.getDecorator().getName());
+        }
 
         gameRepository.save(game);
 
