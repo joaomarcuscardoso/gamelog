@@ -92,8 +92,6 @@ public class GameController {
         this.game = game;
         gameRepository.save(game);
 
-        gameRepository.save(game);
-
         long gameCount = gameRepository.countByUser(user);
 
         // Command
